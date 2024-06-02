@@ -12,7 +12,7 @@ const app = express();
 // Session middleware configuration
 app.use(
   session({
-    secret: "your-session-secret",
+    secret: "passport-auth",
     resave: false,
     saveUninitialized: true,
   })

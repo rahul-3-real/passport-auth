@@ -12,22 +12,21 @@ passport.use(
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     (accessToken, refreshToken, profile, done) => {
-      const existingUser = User.findOne({ google_id: profile.id }).then(
-        (currentUser) => {
-          if (existingUser) {
-            return done(null, existingUser);
-          } else {
-            new User({
-              google_id: profile.id,
-              username: profile.displayName,
-            })
-              .save()
-              .then((newUser) => {
-                console.log(newUser);
-              });
-          }
+      User.findOne({ google_id: profile.id }).then((currentUser) => {
+        if (currentUser) {
+          return done(null, currentUser);
+        } else {
+          new User({
+            google_id: profile.id,
+            username: profile.displayName,
+          })
+            .save()
+            .then((newUser) => {
+              console.log(newUser);
+              done(null, newUser);
+            });
         }
-      );
+      });
 
       return done(null, profile);
     }
@@ -36,10 +35,12 @@ passport.use(
 
 // Serialize user into the session
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
 
 // Deserialize user from the session
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
+    done(null, user);
+  });
 });

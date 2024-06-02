@@ -21,17 +21,16 @@ router.get(
   "/google/redirect",
   passport.authenticate("google", { failureRedirect: "/auth/login" }),
   (req, res) => {
-    // Successful authentication, redirect or respond accordingly
-    res.send("Callback URI");
+    res.redirect("/");
   }
 );
 
-router.get("/logout", (req, res) => {
+router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
     }
-    res.send("logout");
+    res.redirect("/auth/login");
   });
 });
 
