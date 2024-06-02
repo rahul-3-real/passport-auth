@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import session from "express-session";
 import passport from "passport";
+import mongoose from "mongoose";
 
 import AuthRouter from "./routes/auth-routes.js";
 
@@ -35,6 +36,14 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", AuthRouter);
 
+// Connection
+try {
+  mongoose.connect(process.env.MONGO_URI);
+  console.log(`Connecting to Mongo DB`);
+} catch (error) {
+  console.log(error);
+  process.exit(1);
+}
 app.listen(8000, () => {
   console.log(`Server running on port 3000`);
 });
