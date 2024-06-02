@@ -38,7 +38,7 @@ app.use("/auth", AuthRouter);
 
 // Connection
 try {
-  mongoose.connect(process.env.MONGO_URI);
+  mongoose.connect(`${process.env.MONGO_URI}/passport-auth`);
   console.log(`Connecting to Mongo DB`);
 } catch (error) {
   console.log(error);

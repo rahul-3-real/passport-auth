@@ -1,6 +1,8 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
+import User from "../models/user-model.js";
+
 passport.use(
   new GoogleStrategy(
     {
@@ -10,9 +12,23 @@ passport.use(
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     (accessToken, refreshToken, profile, done) => {
-      // Callback - process profile data and save user information
-      // Use `done` to pass user information to passport
-      console.log(profile);
+      const existingUser = User.findOne({ google_id: profile.id }).then(
+        (currentUser) => {
+          if (existingUser) {
+            return done(null, existingUser);
+          } else {
+            new User({
+              google_id: profile.id,
+              username: profile.displayName,
+            })
+              .save()
+              .then((newUser) => {
+                console.log(newUser);
+              });
+          }
+        }
+      );
+
       return done(null, profile);
     }
   )
